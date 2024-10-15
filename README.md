@@ -1,1 +1,1 @@
-Lyric music aesthetic version 2
+Lyric music aesthetic version 2 inspired from Tiktok
