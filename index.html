@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lyric Music</title>
+  <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">
+  <link rel="stylesheet" href="src/index.css">
+  <script src="//unpkg.com/alpinejs" defer></script>
+</head>
+
+<body class="max-w-7xl h-screen flex justify-center items-center bg-zinc-950">
+  <img src="src/album.png" alt="" class="absolute object-cover -z-10 blur-lg h-screen md:w-screen">
+  <section class="p-4 bg-zinc-900 bg-opacity-60 text-zinc-50 rounded-xl w-[21rem]"
+    x-data="{ playing: false, progress: 0, currentTime: 0, duration: 0}"
+    @play="playing = true;" @pause="playing = false">
+    <div class="flex items-center justify-end">
+      <img src="src/vinyl.png" alt="" class="h-[6.2rem] -mr-12" :class="playing ? 'animate-spin-slow' : ''">
+      <img src="src/album.png" alt="" class="h-24 rounded-r-sm z-10">
+    </div>
+
+    <!-- lyrics -->
+    <div id="lyrics" class="lyrics my-4 mb-6 font-bold text-2xl"></div>
+
+    <!-- music -->
+    <div>
+      <h1 class="font-bold text-base">Don't Talk Anymore</h1>
+      <h2 class="font-medium text-sm text-zinc-400">Charlie Puth</h2>
+      <div class="mt-2">
+        <audio x-ref="audio" src="src/music.mp3"
+          @timeupdate="progress = ($refs.audio.currentTime / $refs.audio.duration) * 100; currentTime = $refs.audio.currentTime; duration = $refs.audio.duration"
+          @loadedmetadata="duration = $refs.audio.duration">
+        </audio>
+      </div>
+      <div class="flex items-center gap-2">
+        <span x-text="Math.floor(currentTime / 60) + ':' + ('0' + Math.floor(currentTime % 60)).slice(-2)"
+          class="text-xs text-zinc-400 font-medium"></span>
+        <div class="relative h-[6px] w-full bg-zinc-400 bg-opacity-40 rounded-full">
+          <div class="absolute top-0 left-0 h-full bg-zinc-50 rounded-full" :style="'width: ' + progress + '%'"></div>
+        </div>
+        <span x-text="Math.floor(duration / 60) + ':' + ('0' + Math.floor(duration % 60)).slice(-2)"
+          class="text-xs text-zinc-400 font-medium"></span>
+      </div>
+      <div class="flex justify-end gap-8 mt-4 mr-6">
+        <div class="flex items-center gap-10">
+          <img src="src/backward.fill.svg" alt="" class="hover:scale-95 cursor-pointer">
+          <button id="showLyricsBtn" @click="playing ? $refs.audio.pause() : $refs.audio.play(); playing = !playing">
+            <img :src="playing ? 'src/pause.fill.svg' : 'src/play.fill.svg'" alt="" class="h-6 hover:scale-95">
+          </button>
+          <img src="src/forward.fill.svg" alt="" class="hover:scale-95 cursor-pointer">
+        </div>
+        <img src="src/airplayaudio 1.svg" alt="" class="hover:scale-95 cursor-pointer">
+      </div>
+
+    </div>
+  </section>
+
+  <script>
+    const lyrics = [
+      "There must be a good reason that you're gone",
+      "Every now and then I think you might want me to",
+      "Come show up at your door",
+      "But I'm just too afraid that I'll be wrong",
+      "I overdosed",
+      "Should've known your love was a game",
+      "Now I can't get you out of my brain",
+      "Oh, it's such a shame",
+      "Don't wanna know",
+      "If you're looking into her eyes",
+      "If she's holding onto you so tight",
+      "The way I did before",
+    ];
+
+    let index = 0;
+    let intervalId;
+
+    function showNextLine() {
+        const lyricsDiv = document.getElementById('lyrics');
+        lyricsDiv.textContent = lyrics[index];
+        index++;
+
+        if (index >= 8) {
+          clearInterval(intervalId);
+          intervalId = setInterval(showNextLine, 2000); // Change interval to 2000ms
+        }
+      }
+
+    document.getElementById('showLyricsBtn').addEventListener('click', function () {
+      const button = this;
+      if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+      } else {
+        showNextLine();
+        intervalId = setInterval(showNextLine, 3000);
+      }
+    });
+  </script>
+
+
+
+</body>
+
+</html>
